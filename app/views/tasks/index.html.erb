@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>YourAppName</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <!-- Include the main application stylesheet -->
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+
+  <!-- Include the todos stylesheet -->
+  <%= stylesheet_link_tag 'styles_tasks', media: 'all' %>
+
+  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
+</head>
+
+<body>
+    <div class="container">
+        <h1>TODOS</h1>
+        <div class="tabs">
+            <%= link_to "Incomplete", tasks_path, class: "tab #{'active' if params[:get_status].nil?}", id: "incomplete-tab", method: :patch, title: "Incomplete Tab" %>
+            <%= link_to "Complete", list_completed_tasks_path("completed"), class: "tab #{'active' if params[:get_status] == 'completed'}", id: "complete-tab",style: "margin-left: 50px", method: :patch, title: "Complete Tab" %>
+
+        </div>
+
+        <%= form_with model: @task, data: {turbo: false} do |f| %>
+        <%= f.label :name, "Name", style: "text-align: left;" %>
+
+        <div class="input-container">
+
+        <%= f.text_field :name, placeholder: "Enter task name", autocomplete: "off" %>
+        <%= f.hidden_field :status, value: "incomplete", autocomplete: "off" %>
+        <%= f.submit "Create Todo" %>
+        <% end %>
+        </div>
+
+        <div class="todo-list">
+        <% @all_tasks.each do |task_name| %>
+            <div class="todo-item">
+                <%= task_name.name %>
+                <%= render "error_message" %>
+                <div class="todo-actions">
+                    <%= link_to "✔️", complete_task_path(task_name), class: "check-btn", method: :patch, title: "Mark as complete" %>
+                    <button class="delete-btn">🗑️</button>
+                </div>
+            </div>
+        <% end %>
+        </div>
+    </div>
+</body>
+</html>
